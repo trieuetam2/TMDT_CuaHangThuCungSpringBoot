@@ -68,12 +68,17 @@ public class ProductControler {
 		String a = (String) session.getAttribute("NoSignIn");
 		System.out.println(a);
 		System.out.println(NoSignIn);
+		User acc = (User) session.getAttribute("acc");
 		if (remember != null) {
-			User acc = userService.findByIdAndRole(user_name.getValue(), "user");
+			acc = userService.findByIdAndRole(user_name.getValue(), "user");
 			session.setAttribute("acc", acc);
 			List<Cart> listCart = cartService.GetAllCartByUser_id(acc.getId());
 			session.setAttribute("countCart", listCart.size());
 		}
+		if(acc!=null) {
+			List<Cart> listCart = cartService.GetAllCartByUser_id(acc.getId());
+			session.setAttribute("countCart", listCart.size());
+			}
 		if (session.getAttribute("acc") == null)
 			session.setAttribute("countCart", "0");
 		model.addAttribute("error_momo", error_momo);
@@ -124,42 +129,62 @@ public class ProductControler {
 	@GetMapping("/productDetail/{id}")
 	public String ProductDetailId(@PathVariable int id, Model model) {
 		Product product = productService.getProductById(id);
-		System.out.println(product);
-		session.setAttribute("product", product);
-		return "redirect:/productDetail";
-	}
-
-	@GetMapping("/productDetail")
-	public String ProductDetail(Model model) {
-		Product product = (Product) session.getAttribute("product");
+		if(product !=null){
+		List<Product> relatedProduct = productService.findTop4ProductByCategory_id(product.getCategory().getId());
+		model.addAttribute("relatedProduct", relatedProduct);
 		model.addAttribute(product);
 		return "shop-details";
+		}
+		else {
+			return "redirect:/home";
+		}
+		
 	}
+
+//	@GetMapping("/productDetail")
+//	public String ProductDetail(Model model) {
+//		Product product = (Product) session.getAttribute("product");
+//		
+//	}
 
 	@PostMapping("/search")
 	public String Search(@ModelAttribute("search-input") String search_input, Model model) throws Exception {
+		session.setAttribute("search_input", search_input);
+		return "redirect:/search/0";
+	}
+	@GetMapping("/search/{id}")
+	public String SearchPage(@PathVariable int id, Model model) throws Exception {
 		List<Category> listCategory = categoryService.findAll();
+		String search_input = (String) session.getAttribute("search_input");
 		if (search_input != null) {
+			Pageable pageable = PageRequest.of(id, 12);
 			System.out.println(search_input);
-			List<Product> listProduct = productRepository.findByProduct_NameContaining(search_input);
+			Page<Product> listProduct = productRepository.findByProduct_NameContaining(search_input, pageable);
+			List<Product> listProductAll = productRepository.findByProduct_NameContaining(search_input);
 			System.out.println(listProduct);
-			int TotalPro = listProduct.size();
+			int TotalPro = listProductAll.size();
 			model.addAttribute("TotalPro",TotalPro);
 			model.addAttribute("search_input", search_input);
 			model.addAttribute("listProduct", listProduct);
 			model.addAttribute("listCategory", listCategory);
-			model.addAttribute("noPageable", "noPageable");
+			model.addAttribute("pageSearch", "pageSearch");
+			model.addAttribute("noPageable", "search");
 			for(Product y :listProduct) {
 				System.out.println(y);
 			}
 			return "shop";
 		} else {
 			model.addAttribute("TotalPro",0);
-			model.addAttribute("noPageable", "noPageable");
+			model.addAttribute("noPageable", "search");
 			model.addAttribute("listCategory", listCategory);
 			model.addAttribute("search_input", null);
 			model.addAttribute("listProduct", null);
 			return "shop";
 		}
+	}
+	
+	@GetMapping("blog-details")
+	public String blogDetailsView(Model model) {
+		return "blog-details";
 	}
 }

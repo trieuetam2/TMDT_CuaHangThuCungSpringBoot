@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import WebProject.WebProject.entity.Cart;
 import WebProject.WebProject.entity.Order;
 import WebProject.WebProject.entity.Order_Item;
+import WebProject.WebProject.entity.Product;
 import WebProject.WebProject.entity.User;
 import WebProject.WebProject.service.CartService;
 import WebProject.WebProject.service.OrderService;
@@ -58,15 +59,27 @@ public class OrderController {
 
 	@GetMapping("checkout")
 	public String CheckOutView(Model model) {
-//		User user = (User) session.getAttribute("acc");
-		String a = session.getAttribute("Total").toString();
-		int Total = Integer.parseInt(a);
-		System.out.println(Total);
-		model.addAttribute("Total", a);
-		@SuppressWarnings("unchecked")
-		List<Cart> listCart = (List<Cart>) session.getAttribute("listCart");
-		model.addAttribute("listCart", listCart);
-		return "checkout";
+		User user = (User) session.getAttribute("acc");
+		if (user == null) {
+			session.setAttribute("AddToCartErr", "Vui lòng đăng nhập trước khi thực hiện thao tác!");
+			return "redirect:/home";
+		} else {
+			List<Cart> Cart = cartService.GetAllCartByUser_id(user.getId());
+			if (Cart == null) {
+				String a = session.getAttribute("Total").toString();
+				int Total = Integer.parseInt(a);
+				System.out.println(Total);
+				model.addAttribute("Total", a);
+				@SuppressWarnings("unchecked")
+				List<Cart> listCart = (List<Cart>) session.getAttribute("listCart");
+				model.addAttribute("listCart", listCart);
+				return "checkout";
+			}
+			else {
+				session.setAttribute("CartIsEmpty", "CartIsEmpty");
+				return "redirect:/cart";
+			}
+		}
 	}
 
 	@PostMapping("checkout")
@@ -74,8 +87,8 @@ public class OrderController {
 			@ModelAttribute("address") String address, @ModelAttribute("phone") String phone,
 			@ModelAttribute("email") String email, @ModelAttribute("note") String note,
 			@RequestParam(value = "payOndelivery", defaultValue = "false") boolean payOndelivery,
-			@RequestParam(value = "payWithMomo", defaultValue = "false") boolean payWithMomo, Model model, HttpServletResponse resp)
-			throws Exception {
+			@RequestParam(value = "payWithMomo", defaultValue = "false") boolean payWithMomo, Model model,
+			HttpServletResponse resp) throws Exception {
 
 		long millis = System.currentTimeMillis();
 		Date booking_date = new java.sql.Date(millis);
@@ -88,8 +101,7 @@ public class OrderController {
 		String payment_method = null;
 		if (payOndelivery == true) {
 			payment_method = "Payment on delivery";
-		}
-		else {
+		} else {
 			payment_method = "Payment with momo";
 		}
 		Order newOrder = new Order();
@@ -104,7 +116,7 @@ public class OrderController {
 		newOrder.setPhone(phone);
 		newOrder.setStatus(status);
 		newOrder.setUser(user);
-		if(payment_method=="Payment with momo"){
+		if (payment_method == "Payment with momo") {
 			session.setAttribute("newOrder", newOrder);
 			ObjectMapper mapper = new ObjectMapper();
 			int code = (int) Math.floor(((Math.random() * 89999999) + 10000000));
@@ -116,7 +128,7 @@ public class OrderController {
 			jsonRequest.setRedirectUrl(Constant.redirectUrl);
 			jsonRequest.setIpnUrl(Constant.ipnUrl);
 			jsonRequest.setAmount(String.valueOf(Total));
-			jsonRequest.setOrderInfo("Thanh toán dịch vụ khách sạn");
+			jsonRequest.setOrderInfo("Thanh toán Male Fashion.");
 			jsonRequest.setRequestId(orderId);
 			jsonRequest.setOrderType(Constant.orderType);
 			jsonRequest.setRequestType(Constant.requestType);
@@ -148,19 +160,22 @@ public class OrderController {
 				e.printStackTrace();
 			}
 			if (res == null) {
-				session.setAttribute("error_momo", "Đặt phòng thất bại");
+				session.setAttribute("error_momo", "Thanh toán thất bại");
 				return "redirect:/home";
 			} else {
 //					return "redirect:/shop";
 //				resp.sendRedirect(res.payUrl);
 				return "redirect:" + res.payUrl;
 			}
-		}
-		else {
+		} else {
 			orderService.saveOrder(newOrder);
 			List<Order> listOrder = orderService.getAllOrderByUser_Id(user.getId());
 			newOrder = listOrder.get(listOrder.size() - 1);
 			for (Cart y : listCart) {
+				Product product = y.getProduct();
+				product.setQuantity(product.getQuantity() - y.getCount());
+				product.setSold(product.getSold() + y.getCount());
+				productService.saveProduct(product);
 				Order_Item newOrder_Item = new Order_Item();
 				newOrder_Item.setCount(y.getCount());
 				newOrder_Item.setOrder(newOrder);
@@ -174,13 +189,13 @@ public class OrderController {
 			return "redirect:/invoice";
 		}
 	}
+
 	@GetMapping("paywithmomo")
 	public String PayWithMomoGet(@ModelAttribute("message") String message, Model model) {
-		if(!message.equals("Successful.")) {
+		if (!message.equals("Successful.")) {
 			session.setAttribute("error_momo", "Thanh toán không thành công!");
 			return "redirect:/home";
-		}
-		else {
+		} else {
 			@SuppressWarnings("unchecked")
 			List<Cart> listCart = (List<Cart>) session.getAttribute("listCart");
 			User user = (User) session.getAttribute("acc");
@@ -189,6 +204,10 @@ public class OrderController {
 			List<Order> listOrder = orderService.getAllOrderByUser_Id(user.getId());
 			newOrder = listOrder.get(listOrder.size() - 1);
 			for (Cart y : listCart) {
+				Product product = y.getProduct();
+				product.setQuantity(product.getQuantity() - y.getCount());
+				product.setSold(product.getSold() + y.getCount());
+				productService.saveProduct(product);
 				Order_Item newOrder_Item = new Order_Item();
 				newOrder_Item.setCount(y.getCount());
 				newOrder_Item.setOrder(newOrder);
@@ -203,20 +222,21 @@ public class OrderController {
 			return "redirect:/invoice";
 		}
 	}
+
 	@GetMapping("invoice")
 	public String Invoice(Model model) {
 		Order order = (Order) session.getAttribute("order");
 		String invoiceView = (String) session.getAttribute("invoiceView");
 		session.setAttribute("invoiceView", null);
 		List<Order_Item> listOrder_Item = order_ItemService.getAllByOrder_Id(order.getId());
-		model.addAttribute("invoiceView",invoiceView);
+		model.addAttribute("invoiceView", invoiceView);
 		model.addAttribute("listOrder_Item", listOrder_Item);
 		model.addAttribute("order", order);
 		return "invoice";
 	}
-	
+
 	@GetMapping("/invoice/{id}")
-	public String InvoiceView(@PathVariable int id ,Model model, HttpServletRequest request) {
+	public String InvoiceView(@PathVariable int id, Model model, HttpServletRequest request) {
 		String referer = request.getHeader("Referer");
 		model.addAttribute("referer", referer);
 		Order order = orderService.findById(id);
@@ -224,19 +244,19 @@ public class OrderController {
 		session.setAttribute("invoiceView", "view");
 		return "redirect:/invoice";
 	}
+
 	@GetMapping("/myhistory")
 	public String Myhistory(Model model, HttpServletRequest request) {
 		String referer = request.getHeader("Referer");
-		User user =(User) session.getAttribute("acc");
-		if(user ==null) {
-			return "redirect:"+referer;
-		}
-		else {
-			List<Order> listOrder= orderService.getAllOrderByUser_Id(user.getId());
+		User user = (User) session.getAttribute("acc");
+		if (user == null) {
+			return "redirect:" + referer;
+		} else {
+			List<Order> listOrder = orderService.getAllOrderByUser_Id(user.getId());
 			Collections.reverse(listOrder);
-			model.addAttribute("listOrder",listOrder);
+			model.addAttribute("listOrder", listOrder);
 			System.out.println(listOrder);
-			for(Order y: listOrder) {
+			for (Order y : listOrder) {
 				System.out.println(y.getOrder_Item());
 			}
 		}

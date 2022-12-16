@@ -4,7 +4,7 @@
 
 <!-- Basic Page Needs
 ================================================== -->
-<title>Listeo</title>
+<title>Admin Page</title>
 <meta charset="utf-8">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -13,7 +13,7 @@
 ================================================== -->
 <link rel="stylesheet" href="/listeo/css/style.css">
 <link rel="stylesheet" href="/listeo/css/main-color.css" id="colors">
-
+<link rel="icon" href="/img/logo-3.png">
 </head>
 
 <body>
@@ -61,22 +61,22 @@
 							<!-- User Menu -->
 							<div class="user-menu">
 								<div class="user-name">
-									<span><img src="images/dashboard-avatar.jpg" alt=""></span>My
+									<span><img th:src="${session.admin.avatar}" alt=""></span>My
 									Account
 								</div>
 								<ul>
-									<li><a href="dashboard.html"><i
+									<li><a th:href="@{/dashboard}"><i
 											class="sl sl-icon-settings"></i> Dashboard</a></li>
-									<li><a href="dashboard-my-profile.html"><i
+									<li><a th:href="@{/dashboard-myprofile}"><i
 											class="sl sl-icon-envelope-open"></i> My Profile</a></li>
-									<li><a href="dashboard-bookings.html"><i
+									<li><a th:href="@{/dashboard-orders}"><i
 											class="fa fa-calendar-check-o"></i> Orders</a></li>
 									<li><a th:href="@{/logout-admin}"><i
 											class="sl sl-icon-power"></i> Logout</a></li>
 								</ul>
 							</div>
 
-							<a href="dashboard-add-listing.html"
+							<a th:href="@{/dashboard-addproduct}"
 								class="button border with-icon">Add Product<i
 								class="sl sl-icon-plus"></i></a>
 						</div>
@@ -145,7 +145,7 @@
 				<div id="titlebar">
 					<div class="row">
 						<div class="col-md-12">
-							<h2>Howdy, Tom!</h2>
+							<h2 th:text="${session.admin.user_Name + '!'}"></h2>
 							<!-- Breadcrumbs -->
 							<nav id="breadcrumbs">
 								<ul>

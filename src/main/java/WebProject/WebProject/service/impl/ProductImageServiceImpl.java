@@ -16,6 +16,11 @@ public class ProductImageServiceImpl implements ProductImageService{
 	public void save(ProductImage productImage) {
 		productImageRepository.save(productImage);
 	}
+
+	@Override
+	public void deleteById(int id) {
+		productImageRepository.deleteById(id);
+	}
 	
 	
 }

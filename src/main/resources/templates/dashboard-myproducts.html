@@ -4,7 +4,7 @@
 
 <!-- Basic Page Needs
 ================================================== -->
-<title>Listeo</title>
+<title>Admin Page</title>
 <meta charset="utf-8">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -13,7 +13,7 @@
 ================================================== -->
 <link rel="stylesheet" href="/listeo/css/style.css">
 <link rel="stylesheet" href="/listeo/css/main-color.css" id="colors">
-
+<link rel="icon" href="/img/logo-3.png">
 </head>
 
 <body>
@@ -59,22 +59,22 @@
 							<!-- User Menu -->
 							<div class="user-menu">
 								<div class="user-name">
-									<span><img src="/images/dashboard-avatar.jpg" alt=""></span>My
+									<span><img th:src="${session.admin.avatar}" alt=""></span>My
 									Account
 								</div>
 								<ul>
-									<li><a href="dashboard.html"><i
+									<li><a th:href="@{/dashboard}"><i
 											class="sl sl-icon-settings"></i> Dashboard</a></li>
-									<li><a href="dashboard-my-profile.html"><i
+									<li><a th:href="@{/dashboard-myprofile}"><i
 											class="sl sl-icon-envelope-open"></i> My Profile</a></li>
-									<li><a href="dashboard-bookings.html"><i
+									<li><a th:href="@{/dashboard-orders}"><i
 											class="fa fa-calendar-check-o"></i> Orders</a></li>
 									<li><a th:href="@{/logout-admin}"><i
 											class="sl sl-icon-power"></i> Logout</a></li>
 								</ul>
 							</div>
 
-							<a href="dashboard-add-listing.html"
+							<a th:href="@{/dashboard-addproduct}"
 								class="button border with-icon">Add Product<i
 								class="sl sl-icon-plus"></i></a>
 						</div>
@@ -209,7 +209,7 @@
 											</div>
 										</div>
 										<div class="buttons-to-right">
-											<a href="dashboard-my-products-edit.html" class="button gray"><i
+											<a th:href="@{/dashboard-myproducts/edit/{id}(id=${y.id})}" class="button gray"><i
 												class="sl sl-icon-note"></i> Edit</a> <a href="#"
 												class="button gray"><i class="sl sl-icon-close"></i>
 												Delete</a>
@@ -228,13 +228,13 @@
 							<div class="pagination-container margin-top-20 margin-bottom-40">
 								<nav class="pagination">
 									<ul>
-										<li><a th:if="${pageProduct.number} > 0"
+										<li><a class="paging-item" th:if="${pageProduct.number} > 0"
 											th:href="@{/dashboard-myproducts/{page}(page=${pageProduct.number - 1})}"><i
 												class="sl sl-icon-arrow-left"></i></a></li>
-										<li><a
+										<li><a class="paging-item"
 											th:href="@{/dashboard-myproducts/{page}(page=${pageProduct.number})}"
-											class="current-page" th:text="${pageProduct.number+1}"></a></li>
-										<li><a
+											 th:text="${pageProduct.number+1}"></a></li>
+										<li><a class="paging-item"
 											th:if="${pageProduct.number} < ${pageProduct.totalPages - 1}"
 											th:href="@{/dashboard-myproducts/{page}(page=${pageProduct.number + 1})}"><i
 												class="sl sl-icon-arrow-right"></i></a></li>
@@ -293,7 +293,7 @@
 	<script type="text/javascript" src="/scripts/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="/scripts/tooltips.min.js"></script>
 	<script type="text/javascript" src="/scripts/custom.js"></script>
-
+	<script type="text/javascript" src="/scripts/myjs.js"> </script>
 
 </body>
 </html>

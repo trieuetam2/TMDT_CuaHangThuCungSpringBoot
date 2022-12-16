@@ -70,6 +70,8 @@ public class CartController {
 			System.out.println(id);
 			cartService.deleteById(id);
 			session.setAttribute("CartDelete", id);
+			List<Cart> listCart = cartService.GetAllCartByUser_id(user.getId());
+			session.setAttribute("countCart", listCart.size());
 			return "redirect:/cart";
 		}
 	}
@@ -99,7 +101,7 @@ public class CartController {
 		String referer = request.getHeader("Referer");
 		User user = (User) session.getAttribute("acc");
 		if (user == null) {
-			session.setAttribute("NoSignIn", "Vui lòng đăng nhập trước khi thực hiện thao tác");
+			session.setAttribute("AddToCartErr", "Vui lòng đăng nhập trước khi thực hiện thao tác");
 			return "redirect:" + referer;
 		} else {
 			List<Cart> listCart = cartService.GetAllCartByUser_id(user.getId());
@@ -124,17 +126,20 @@ public class CartController {
 				newCart.setUser(user);
 				cartService.saveCart(newCart);
 			}
+			listCart = cartService.GetAllCartByUser_id(user.getId());
+			session.setAttribute("countCart", listCart.size());
 			return "redirect:" + referer;
 		}
 	}
 
 	@PostMapping("/addToCart")
-	public String AddToCartPost(@ModelAttribute("product_id") int product_id, @ModelAttribute("count") int count,
+	public String AddToCartPost(@ModelAttribute("product_id") int product_id, @ModelAttribute("count") String a,
 			Model model, HttpServletRequest request) throws Exception {
+		int count = Integer.parseInt(a);
 		String referer = request.getHeader("Referer");
 		User user = (User) session.getAttribute("acc");
 		if (user == null) {
-			session.setAttribute("NoSignIn", "Vui lòng đăng nhập trước khi thực hiện thao tác");
+			session.setAttribute("AddToCartErr", "Vui lòng đăng nhập trước khi thực hiện thao tác");
 			return "redirect:" + referer;
 		} else {
 			List<Cart> listCart = cartService.GetAllCartByUser_id(user.getId());
@@ -142,23 +147,20 @@ public class CartController {
 			int cart = 0;
 			for (Cart y : listCart) {
 				if (y.getProduct().getId() == product_id) {
+					y.setCount(y.getCount() + count);
+					cartService.saveCart(y);
 					cart++;
 				}
 			}
-			if (cart > 0) {
-				for (Cart y : listCart) {
-					if (y.getProduct().getId() == product_id) {
-						y.setCount(y.getCount() + count);
-						cartService.saveCart(y);
-					}
-				}
-			} else {
+			if (cart == 0) {
 				Cart newCart = new Cart();
 				newCart.setCount(count);
 				newCart.setProduct(product);
 				newCart.setUser(user);
 				cartService.saveCart(newCart);
 			}
+			listCart = cartService.GetAllCartByUser_id(user.getId());
+			session.setAttribute("countCart", listCart.size());
 			return "redirect:" + referer;
 		}
 

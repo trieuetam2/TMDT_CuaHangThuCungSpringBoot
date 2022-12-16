@@ -23,9 +23,17 @@
 <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
 <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
 <link rel="stylesheet" href="css/style.css" type="text/css">
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
 
 <body>
+	<script th:if="${session.CartIsEmpty != null}">
+		swal("Cart Is Empty!", "", "error");
+	</script>
+	<p th:if="${session.CartIsEmpty != null}"
+		th:text="${#session.setAttribute('CartIsEmpty', null)}"
+		style="display: none;"></p>
 	<!-- Page Preloder -->
 	<div id="preloder">
 		<div class="loader"></div>

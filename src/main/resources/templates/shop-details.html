@@ -15,18 +15,24 @@
 	rel="stylesheet">
 
 <!-- Css Styles -->
-<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
-<link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
-<link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
-<link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
-<link rel="stylesheet" href="css/nice-select.css" type="text/css">
-<link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
-<link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
-<link rel="stylesheet" href="css/style.css" type="text/css">
-
+<link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+<link rel="stylesheet" href="/css/font-awesome.min.css" type="text/css">
+<link rel="stylesheet" href="/css/elegant-icons.css" type="text/css">
+<link rel="stylesheet" href="/css/magnific-popup.css" type="text/css">
+<link rel="stylesheet" href="/css/nice-select.css" type="text/css">
+<link rel="stylesheet" href="/css/owl.carousel.min.css" type="text/css">
+<link rel="stylesheet" href="/css/slicknav.min.css" type="text/css">
+<link rel="stylesheet" href="/css/style.css" type="text/css">
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
 
 <body>
+	<script th:if="${session.AddToCartErr != null}">
+		swal("Lỗi", "Vui lòng đăng nhập trước khi thực hiện thao tác!", "error");
+	</script>
+	<p th:if="${session.AddToCartErr != null}"
+		th:text="${#session.setAttribute('AddToCartErr', null)}"
+		style="display: none;"></p>
 	<!-- Page Preloder -->
 	<div id="preloder">
 		<div class="loader"></div>
@@ -52,10 +58,10 @@
 			</div>
 		</div>
 		<div class="offcanvas__nav__option">
-			<a href="#" class="search-switch"><img src="img/icon/search.png"
-				alt=""></a> <a href="#"><img src="img/icon/heart.png" alt=""></a>
-			<a th:href="@{/cart}"><img src="img/icon/cart.png" alt=""> <span
-							th:text="${session.countCart}"></span></a>
+			<a href="#" class="search-switch"><img src="/img/icon/search.png"
+				alt=""></a> <a href="#"><img src="/img/icon/heart.png" alt=""></a>
+			<a th:href="@{/cart}"><img src="/img/icon/cart.png" alt="">
+				<span th:text="${session.countCart}"></span></a>
 		</div>
 		<div id="mobile-menu-wrap"></div>
 		<div class="offcanvas__text">
@@ -100,7 +106,7 @@
 			<div class="row">
 				<div class="col-lg-3 col-md-3">
 					<div class="header__logo">
-						<a th:href="@{/home}"><img src="img/logo.png" alt=""></a>
+						<a th:href="@{/home}"><img src="/img/logo.png" alt=""></a>
 					</div>
 				</div>
 				<div class="col-lg-6 col-md-6">
@@ -109,13 +115,12 @@
 							<li><a th:href="@{/home}">Home</a></li>
 							<li class="active"><a th:href="@{/shop}">Shop</a></li>
 							<li><a href="#">Pages</a>
-                                <ul class="dropdown">
-                                	<li><a th:href="@{/cart}">Shopping Cart</a></li>
-                                	<li><a th:href="@{/myprofile}">My Profile</a></li>
-                                	<li><a th:href="@{/myhistory}">My History</a></li>
-                                    <li><a th:href="@{/about}">About Us</a></li>
-                                </ul>
-                            </li>
+								<ul class="dropdown">
+									<li><a th:href="@{/cart}">Shopping Cart</a></li>
+									<li><a th:href="@{/myprofile}">My Profile</a></li>
+									<li><a th:href="@{/myhistory}">My History</a></li>
+									<li><a th:href="@{/about}">About Us</a></li>
+								</ul></li>
 							<li><a th:href="@{/blog}">Blog</a></li>
 							<li><a th:href="@{/contact}">Contacts</a></li>
 						</ul>
@@ -124,9 +129,9 @@
 				<div class="col-lg-3 col-md-3">
 					<div class="header__nav__option">
 						<a href="#" class="search-switch"><img
-							src="img/icon/search.png" alt=""></a> <a href="#"><img
-							src="img/icon/heart.png" alt=""></a> <a th:href="@{/cart}"><img
-							src="img/icon/cart.png" alt=""> <span
+							src="/img/icon/search.png" alt=""></a> <a href="#"><img
+							src="/img/icon/heart.png" alt=""></a> <a th:href="@{/cart}"><img
+							src="/img/icon/cart.png" alt=""> <span
 							th:text="${session.countCart}"></span></a>
 					</div>
 				</div>
@@ -206,7 +211,7 @@
 							</div>
 							<h3 th:text="${product.price}+' VNĐ'"></h3>
 							<p th:text="${product.description}"></p>
-							<div class="product__details__option">
+							<!-- <div class="product__details__option">
 								<div class="product__details__option__size">
 									<span>Size:</span> <label for="xxl">xxl <input
 										type="radio" id="xxl">
@@ -229,20 +234,20 @@
 										id="sp-9">
 									</label>
 								</div>
-							</div>
+							</div> -->
 							<form action="addToCart" method="post">
 								<div class="product__details__cart__option">
 									<div class="quantity">
 										<div class="pro-qty">
-											<input name="count" type="text" value="1">
-											<input name="product_id"style="display: none;" type="text" value="${product.id}">
+											<input name="count" type="text" value="1"> <input
+												name="product_id" style="display: none;" type="text"
+												th:value="${product.id}">
 										</div>
 									</div>
-									<button 
-										class="primary-btn">add to cart</button>
+									<button class="primary-btn">add to cart</button>
 								</div>
 							</form>
-							
+
 							<div class="product__details__btns__option">
 								<a href="#"><i class="fa fa-heart"></i> add to wishlist</a> <a
 									href="#"><i class="fa fa-exchange"></i> Add To Compare</a>
@@ -251,7 +256,7 @@
 								<h5>
 									<span>Guaranteed Safe Checkout</span>
 								</h5>
-								<img src="img/shop-details/details-payment.png" alt="">
+								<img src="/img/shop-details/details-payment.png" alt="">
 								<ul>
 									<li><span>SKU:</span> 3812912</li>
 									<li><span>Categories:</span> Clothes</li>
@@ -400,132 +405,40 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
-					<div class="product__item">
-						<div class="product__item__pic set-bg"
-							data-setbg="img/product/product-1.jpg">
-							<span class="label">New</span>
-							<ul class="product__hover">
-								<li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
-								<li><a href="#"><img src="img/icon/compare.png" alt="">
-										<span>Compare</span></a></li>
-								<li><a href="#"><img src="img/icon/search.png" alt=""></a></li>
-							</ul>
-						</div>
-						<div class="product__item__text">
-							<h6>Piqué Biker Jacket</h6>
-							<a href="#" class="add-cart">+ Add To Cart</a>
-							<div class="rating">
-								<i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i
-									class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i
-									class="fa fa-star-o"></i>
+				<th:block th:each="y : ${relatedProduct}">
+					<div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
+						<div class="product__item">
+							<div class="product__item__pic set-bg"
+								th:data-setbg="${y.productImage[0].url_Image}">
+								<span class="label">New</span>
+								<ul class="product__hover">
+									<li><a href="#"><img src="/img/icon/heart.png" alt=""></a></li>
+									<li><a href="#"><img src="/img/icon/compare.png"
+											alt=""> <span>Compare</span></a></li>
+									<li><a th:href="@{/productDetail/{id}(id=${y.id})}"><img src="/img/icon/search.png" alt=""></a></li>
+								</ul>
 							</div>
-							<h5>$67.24</h5>
-							<div class="product__color__select">
-								<label for="pc-1"> <input type="radio" id="pc-1">
-								</label> <label class="active black" for="pc-2"> <input
-									type="radio" id="pc-2">
-								</label> <label class="grey" for="pc-3"> <input type="radio"
-									id="pc-3">
-								</label>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
-					<div class="product__item">
-						<div class="product__item__pic set-bg"
-							data-setbg="img/product/product-2.jpg">
-							<ul class="product__hover">
-								<li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
-								<li><a href="#"><img src="img/icon/compare.png" alt="">
-										<span>Compare</span></a></li>
-								<li><a href="#"><img src="img/icon/search.png" alt=""></a></li>
-							</ul>
-						</div>
-						<div class="product__item__text">
-							<h6>Piqué Biker Jacket</h6>
-							<a href="#" class="add-cart">+ Add To Cart</a>
-							<div class="rating">
-								<i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i
-									class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i
-									class="fa fa-star-o"></i>
-							</div>
-							<h5>$67.24</h5>
-							<div class="product__color__select">
-								<label for="pc-4"> <input type="radio" id="pc-4">
-								</label> <label class="active black" for="pc-5"> <input
-									type="radio" id="pc-5">
-								</label> <label class="grey" for="pc-6"> <input type="radio"
-									id="pc-6">
-								</label>
+							<div class="product__item__text">
+								<h6 th:text="${y.product_Name}"></h6>
+								<a th:href="@{/addToCart/{id}(id=${y.id})}" class="add-cart">+ Add To Cart</a>
+								<div class="rating">
+									<i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i
+										class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i
+										class="fa fa-star-o"></i>
+								</div>
+								<h5 th:text=" ${#numbers.formatDecimal(y.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></h5>
+								<div class="product__color__select">
+									<label for="pc-1"> <input type="radio" id="pc-1">
+									</label> <label class="active black" for="pc-2"> <input
+										type="radio" id="pc-2">
+									</label> <label class="grey" for="pc-3"> <input type="radio"
+										id="pc-3">
+									</label>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
-					<div class="product__item sale">
-						<div class="product__item__pic set-bg"
-							data-setbg="img/product/product-3.jpg">
-							<span class="label">Sale</span>
-							<ul class="product__hover">
-								<li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
-								<li><a href="#"><img src="img/icon/compare.png" alt="">
-										<span>Compare</span></a></li>
-								<li><a href="#"><img src="img/icon/search.png" alt=""></a></li>
-							</ul>
-						</div>
-						<div class="product__item__text">
-							<h6>Multi-pocket Chest Bag</h6>
-							<a href="#" class="add-cart">+ Add To Cart</a>
-							<div class="rating">
-								<i class="fa fa-star"></i> <i class="fa fa-star"></i> <i
-									class="fa fa-star"></i> <i class="fa fa-star"></i> <i
-									class="fa fa-star-o"></i>
-							</div>
-							<h5>$43.48</h5>
-							<div class="product__color__select">
-								<label for="pc-7"> <input type="radio" id="pc-7">
-								</label> <label class="active black" for="pc-8"> <input
-									type="radio" id="pc-8">
-								</label> <label class="grey" for="pc-9"> <input type="radio"
-									id="pc-9">
-								</label>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
-					<div class="product__item">
-						<div class="product__item__pic set-bg"
-							data-setbg="img/product/product-4.jpg">
-							<ul class="product__hover">
-								<li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
-								<li><a href="#"><img src="img/icon/compare.png" alt="">
-										<span>Compare</span></a></li>
-								<li><a href="#"><img src="img/icon/search.png" alt=""></a></li>
-							</ul>
-						</div>
-						<div class="product__item__text">
-							<h6>Diagonal Textured Cap</h6>
-							<a href="#" class="add-cart">+ Add To Cart</a>
-							<div class="rating">
-								<i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i
-									class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i
-									class="fa fa-star-o"></i>
-							</div>
-							<h5>$60.9</h5>
-							<div class="product__color__select">
-								<label for="pc-10"> <input type="radio" id="pc-10">
-								</label> <label class="active black" for="pc-11"> <input
-									type="radio" id="pc-11">
-								</label> <label class="grey" for="pc-12"> <input type="radio"
-									id="pc-12">
-								</label>
-							</div>
-						</div>
-					</div>
-				</div>
+				</th:block>
 			</div>
 		</div>
 	</section>
@@ -538,11 +451,11 @@
 				<div class="col-lg-3 col-md-6 col-sm-6">
 					<div class="footer__about">
 						<div class="footer__logo">
-							<a href="#"><img src="img/footer-logo.png" alt=""></a>
+							<a href="#"><img src="/img/footer-logo.png" alt=""></a>
 						</div>
 						<p>The customer is at the heart of our unique business model,
 							which includes design.</p>
-						<a href="#"><img src="img/payment.png" alt=""></a>
+						<a href="#"><img src="/img/payment.png" alt=""></a>
 					</div>
 				</div>
 				<div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
@@ -617,16 +530,16 @@
 	<!-- Search End -->
 
 	<!-- Js Plugins -->
-	<script src="js/jquery-3.3.1.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
-	<script src="js/jquery.nice-select.min.js"></script>
-	<script src="js/jquery.nicescroll.min.js"></script>
-	<script src="js/jquery.magnific-popup.min.js"></script>
-	<script src="js/jquery.countdown.min.js"></script>
-	<script src="js/jquery.slicknav.js"></script>
-	<script src="js/mixitup.min.js"></script>
-	<script src="js/owl.carousel.min.js"></script>
-	<script src="js/main.js"></script>
+	<script src="/js/jquery-3.3.1.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+	<script src="/js/jquery.nice-select.min.js"></script>
+	<script src="/js/jquery.nicescroll.min.js"></script>
+	<script src="/js/jquery.magnific-popup.min.js"></script>
+	<script src="/js/jquery.countdown.min.js"></script>
+	<script src="/js/jquery.slicknav.js"></script>
+	<script src="/js/mixitup.min.js"></script>
+	<script src="/js/owl.carousel.min.js"></script>
+	<script src="/js/main.js"></script>
 </body>
 
 </html>

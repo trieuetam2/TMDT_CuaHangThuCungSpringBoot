@@ -22,9 +22,17 @@
 <link rel="stylesheet" href="/css/owl.carousel.min.css" type="text/css">
 <link rel="stylesheet" href="/css/slicknav.min.css" type="text/css">
 <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
 
 <body>
+	<script th:if="${session.AddToCartErr != null}">
+		swal("Lỗi", "Vui lòng đăng nhập trước khi thực hiện thao tác!", "error");
+	</script>
+	<p th:if="${session.AddToCartErr != null}"
+		th:text="${#session.setAttribute('AddToCartErr', null)}"
+		style="display: none;"></p>
 	<!-- Page Preloder -->
 	<div id="preloder">
 		<div class="loader"></div>
@@ -316,8 +324,8 @@
 							</div>
 						</div>
 					</div>
-					<div th:if="${noPageable}==null" class="row">
-						<th:block  th:each="y : ${listProduct.content}">
+					<div class="row">
+						<th:block th:each="y : ${listProduct.content}">
 							<div class="col-lg-4 col-md-6 col-sm-6">
 								<div class="product__item">
 									<div class="product__item__pic set-bg"
@@ -340,45 +348,8 @@
 												class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i
 												class="fa fa-star-o"></i>
 										</div>
-										<h5 th:text=" ${#numbers.formatDecimal(y.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></h5>
-										<div class="product__color__select">
-											<label for="pc-4"> <input type="radio" id="pc-4">
-											</label> <label class="active black" for="pc-5"> <input
-												type="radio" id="pc-5">
-											</label> <label class="grey" for="pc-6"> <input type="radio"
-												id="pc-6">
-											</label>
-										</div>
-									</div>
-								</div>
-							</div>
-						</th:block>
-					</div>
-					<div th:if="${noPageable} !=null" class="row">
-						<th:block th:each="y : ${listProduct}">
-							<div class="col-lg-4 col-md-6 col-sm-6">
-								<div class="product__item">
-									<div class="product__item__pic set-bg"
-										th:data-setbg="${y.productImage[0].url_Image}">
-										<ul class="product__hover">
-											<li><a href="#"><img src="/img/icon/heart.png"
-													alt=""></a></li>
-											<li><a href="#"><img src="/img/icon/compare.png"
-													alt=""> <span>Compare</span></a></li>
-											<li><a th:href="@{/productDetail/{id}(id=${y.id})}"><img
-													src="/img/icon/search.png" alt=""></a></li>
-										</ul>
-									</div>
-									<div class="product__item__text">
-										<h6 th:text="${y.product_Name}"></h6>
-										<a th:href="@{/addToCart/{id}(id=${y.id})}" class="add-cart">+
-											Add To Cart</a>
-										<div class="rating">
-											<i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i
-												class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i
-												class="fa fa-star-o"></i>
-										</div>
-										<h5 th:text=" ${#numbers.formatDecimal(y.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></h5>
+										<h5
+											th:text=" ${#numbers.formatDecimal(y.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></h5>
 										<div class="product__color__select">
 											<label for="pc-4"> <input type="radio" id="pc-4">
 											</label> <label class="active black" for="pc-5"> <input
@@ -415,22 +386,37 @@
 						<div class="col-lg-12">
 							<div class="product__pagination">
 								<a th:if="${listProduct.number} > 0" th:text="'<<'"
-									th:href="@{/category/{id}/{p}(id=${idCate} , p=0)}"></a> 
-									<a
+									th:href="@{/category/{id}/{p}(id=${idCate} , p=0)}"></a> <a
 									th:if="${listProduct.number} > 0" th:text="'<'"
-									th:href="@{/category/{id}/{p}(id=${idCate} , p=${listProduct.number} -1)}"></a> 
-									<a
-									class="active"
-									th:href= "@{/category/{id}/{p}(id=${idCate} , p=${listProduct.number})}"
-									th:text="${listProduct.number+1}"></a> 
-									<a
+									th:href="@{/category/{id}/{p}(id=${idCate} , p=${listProduct.number} -1)}"></a>
+								<a class="active"
+									th:href="@{/category/{id}/{p}(id=${idCate} , p=${listProduct.number})}"
+									th:text="${listProduct.number+1}"></a> <a
 									th:if="${listProduct.number} < ${listProduct.totalPages - 1}"
 									th:text="'>'"
-									th:href="@{/category/{id}/{p}(id=${idCate} , p=${listProduct.number} +1)}"></a> 
-									<a
-									th:if="${listProduct.number} < ${listProduct.totalPages - 1}"
+									th:href="@{/category/{id}/{p}(id=${idCate} , p=${listProduct.number} +1)}"></a>
+								<a th:if="${listProduct.number} < ${listProduct.totalPages - 1}"
 									th:text="'>>'"
 									th:href="@{/category/{id}/{p}(id=${idCate} , p=${listProduct.totalPages} - 1)}"></a>
+							</div>
+						</div>
+					</div>
+					<div th:if="${noPageable=='search'}" class="row">
+						<div class="col-lg-12">
+							<div class="product__pagination">
+								<a th:if="${listProduct.number} > 0" th:text="'<<'"
+									th:href="@{/search/{id}(id=0)}"></a> <a
+									th:if="${listProduct.number} > 0" th:text="'<'"
+									th:href="@{/search/{id}(id=${listProduct.number} -1)}"></a> <a
+									class="active"
+									th:href="@{/search/{id}(id=${listProduct.number})}"
+									th:text="${listProduct.number+1}"></a> <a
+									th:if="${listProduct.number} < ${listProduct.totalPages - 1}"
+									th:text="'>'"
+									th:href="@{/search/{id}(id=${listProduct.number} +1)}"></a> <a
+									th:if="${listProduct.number} < ${listProduct.totalPages - 1}"
+									th:text="'>>'"
+									th:href="@{/search/{id}(id=${listProduct.totalPages} - 1)}"></a>
 							</div>
 						</div>
 					</div>

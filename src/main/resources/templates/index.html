@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
 <meta charset="UTF-8">
@@ -9,7 +8,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <title>Male-Fashion</title>
-
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular.js"></script>
 <!-- Google Font -->
 <link
 	href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
@@ -143,12 +143,16 @@
 
 	<!-- Product Section Begin -->
 	<script th:if="${NoSignIn != null}">
-		swal("Lỗi", "Vui lòng đăng nhập trước khi thực hiện thao tác!",
-				"error");
+		swal("Lỗi", "Vui lòng đăng nhập trước khi thực hiện thao tác!", "error");
 	</script>
 	<script th:if="${error_momo != null}">
 		swal("Thanh toán không thành công!", "", "error");
 	</script>
+
+	<script th:if="${session.AddToCartErr != null}">
+		swal("Lỗi", "Vui lòng đăng nhập trước khi thực hiện thao tác!", "error");
+	</script>
+	<p th:if="${session.AddToCartErr != null}" th:text="${#session.setAttribute('AddToCartErr', null)}" style="display: none;"></p>
 	<section class="product spad">
 		<div class="container">
 			<div class="row">
@@ -186,7 +190,8 @@
 										class="fa fa-star"></i> <i class="fa fa-star"></i> <i
 										class="fa fa-star-o"></i>
 								</div>
-								<h5 th:text=" ${#numbers.formatDecimal(y.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></h5>
+								<h5
+									th:text=" ${#numbers.formatDecimal(y.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></h5>
 								<div class="product__color__select">
 									<label for="pc-7"> <input type="radio" id="pc-7">
 									</label> <label class="active black" for="pc-8"> <input
@@ -216,14 +221,15 @@
 							</div>
 							<div class="product__item__text">
 								<h6 th:text="${y.product_Name}"></h6>
-								<a th:href="@{/addToCart/{id}(id=${y.id})}" class="add-cart">+
-									Add To Cart</a>
+								<a th:href="@{/addToCart/{id}(id=${y.id})}"
+									style="cursor: pointer;" class="add-cart">+ Add To Cart</a>
 								<div class="rating">
 									<i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i
 										class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i
 										class="fa fa-star-o"></i>
 								</div>
-								<h5 th:text=" ${#numbers.formatDecimal(y.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></h5>
+								<h5
+									th:text=" ${#numbers.formatDecimal(y.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></h5>
 								<div class="product__color__select">
 									<label for="pc-1"> <input type="radio" id="pc-1">
 									</label> <label class="active black" for="pc-2"> <input
@@ -475,6 +481,18 @@
 	<script src="js/mixitup.min.js"></script>
 	<script src="js/owl.carousel.min.js"></script>
 	<script src="js/main.js"></script>
+	<!-- 	<script>
+	function addCart(id) {
+		$
+				.ajax({
+					url : "/addToCart/"+id,
+					type : "get",
+					success : function(responseData) {
+						document.getElementById("content").innerHTML = responseData;
+					}
+				});
+	}
+	</script> -->
 </body>
 
 </html>
