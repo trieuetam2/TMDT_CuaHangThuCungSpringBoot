@@ -9,7 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.cloudinary.Cloudinary;
+import com.cloudinary.Cloudinary
 
 
 @SpringBootApplication
