@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	User findByEmail(String email);
 	User findById(String id);
 	
-//	@Query(value="select * from user u where u.id = ?1 and u.role = ?2",nativeQuery = true)
+//	@Query(value="select * from user u where u.id = ?1 and u.role = ?2",nativeQuery = true);
 	User findByIdAndRole(String id, String role);
 	
 	void deleteById(String id);
