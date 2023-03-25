@@ -18,8 +18,8 @@ import lombok.NoArgsConstructor;
 
 
 
-@Entity // Đánh dấu đây là table trong db
-@Data // lombok giúp generate các hàm constructor, get, set v.v.
+@Entity // Đánh dấu đây là table trong db.
+@Data // lombok giúp generate các hàm constructor, get, set v.v..
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "category")
