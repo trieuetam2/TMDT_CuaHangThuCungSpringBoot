@@ -1,4 +1,4 @@
-package WebProject.WebProject.config;
+package WebProject.WebProject.config
 
 import java.util.Properties;
 
