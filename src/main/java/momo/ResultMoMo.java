@@ -1,4 +1,4 @@
-package momo;
+package momo2;
 
 public class ResultMoMo {
 	public String t;
