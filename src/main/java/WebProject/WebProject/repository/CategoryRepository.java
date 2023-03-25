@@ -6,6 +6,6 @@ import WebProject.WebProject.entity.Category;
 
 public interface CategoryRepository extends JpaRepository<Category,Long> {
 	
-	Category getById(int id);
+	Category getById(int id)
 
 }
