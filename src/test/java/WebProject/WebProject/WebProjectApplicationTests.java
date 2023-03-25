@@ -9,5 +9,8 @@ class WebProjectApplicationTests {
 	@Test
 	void contextLoads() {
 	}
+	
+		void contextLoads2() {
+	}
 
 }
